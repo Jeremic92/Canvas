@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>HTML5 Canvas</title>
+    </head>
+    <body>
+        <canvas id="draw" width="800" height="800"></canvas>
+
+        <script>
+
+            var canvas = document.querySelector('#draw');
+            var ctx = canvas.getContext('2d');
+
+            canvas.weight = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.strokeStyle = '#BADA55';
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.lineWidth = 40;
+            // ctx.globalCompositeOperation = 'multiply';
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            let hue = 0;
+            let direction = true; //direction make change direction
+
+            function draw(e) {
+                if(!isDrawing) return; // stop the fn(funcion) from running when they are not moused down
+                console.log(e);
+                // ctx is where we  do all of our drawing for our canvas.
+                ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+                ctx.beginPath();
+                // start from
+                ctx.moveTo(lastX, lastY);
+                // go to
+                ctx.lineTo(e.offsetX, e.offsetY); // those value are coming from the actual event that happenede here. 
+                // event je objekat, znaci kad spustimo padajuci meni za event object videcemo ove metode. (offset)
+                ctx.stroke(); //The stroke() method actually draws the path you have defined with
+                            // all those moveTo() and lineTo() methods. The default color is black.
+                [lastX, lastY] = [e.offsetX, e.offsetY]; // we are update lastX and lastY, 
+                                                        // now we can draw curved lines all over the screen
+                hue++;
+                if(hue >= 360) {
+                    hue = 0;
+                }
+                if(ctx.lineWidth >= 40 || ctx.lineWidth <= 1) {
+                    direction = !direction; //change direction
+                }
+                if(direction) {
+                    ctx.lineWidth++;
+                } else {
+                    ctx.lineWidth--;
+                }
+            };
+            // when the person click their mouse down to start it, before we do a mousemove, because mousedown 
+            // will happen before we move our mouse, then we're going to update lastX and lastY
+            canvas.addEventListener('mousedown', (e) => { 
+                isDrawing = true;                       
+                [lastX, lastY] = [e.offsetX, e.offsetY]; 
+            });
+
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', () => isDrawing = false);
+            canvas.addEventListener('mouseout', () => isDrawing = false);
+            </script>
+
+            <style>
+                html, body {
+                margin: 0;
+                }
+        </style>
+    </body>
+</html>
